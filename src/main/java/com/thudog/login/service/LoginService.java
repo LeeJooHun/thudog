@@ -3,7 +3,7 @@ package com.thudog.login.service;
 import com.thudog.global.exception.BadRequestException;
 import com.thudog.login.dto.LoginRequest;
 import com.thudog.user.domain.User;
-import com.thudog.user.domain.UserRepository;
+import com.thudog.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

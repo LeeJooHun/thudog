@@ -2,14 +2,18 @@ package com.thudog.user.service;
 
 import com.thudog.global.exception.BadRequestException;
 import com.thudog.user.domain.User;
-import com.thudog.user.domain.UserRepository;
+import com.thudog.user.domain.repository.UserRepository;
+import com.thudog.user.dto.NicknameUpdateRequest;
+import com.thudog.user.dto.UserResponse;
 import com.thudog.user.dto.UserSignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import static com.thudog.global.exception.ExceptionCode.DUPLICATE_NICKNAME;
-import static com.thudog.global.exception.ExceptionCode.DUPLICATE_USERNAME;
+import java.io.IOException;
+
+import static com.thudog.global.exception.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -17,22 +21,70 @@ import static com.thudog.global.exception.ExceptionCode.DUPLICATE_USERNAME;
 public class UserService {
     private final UserRepository userRepository;
 
-    public Long signUp(UserSignUpRequest request) {
-
-        if (userRepository.existsByUsername(request.getUsername())) {
+    public Long signUp(UserSignUpRequest UserSingUprequest) {
+        if (checkDuplicateUsername(UserSingUprequest.getUsername())) {
             throw new BadRequestException(DUPLICATE_USERNAME);
         }
 
-        if (userRepository.existsByNickname(request.getNickname())) {
+        if (checkDuplicateNickname(UserSingUprequest.getNickname())) {
             throw new BadRequestException(DUPLICATE_NICKNAME);
         }
 
         User user = User.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
-                .nickname(request.getNickname())
+                .username(UserSingUprequest.getUsername())
+                .password(UserSingUprequest.getPassword())
+                .nickname(UserSingUprequest.getNickname())
                 .build();
         User savedUser = userRepository.save(user);
         return savedUser.getId();
+    }
+
+    public void updateImage(String username, MultipartFile file) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_USERNAME));
+
+        try {
+            byte[] imageData = file.getBytes();
+            user.setProfileImage(imageData);
+            userRepository.save(user);
+        } catch (IOException e) {
+            throw new BadRequestException(IMAGE_PROCESSING_ERROR);
+        }
+    }
+
+    public void updateNickname(String username, NicknameUpdateRequest nicknameUpdateRequest) {
+        if (checkDuplicateNickname(nicknameUpdateRequest.getNickname())) {
+            throw new BadRequestException(DUPLICATE_NICKNAME);
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_USERNAME));
+        user.setNickname(nicknameUpdateRequest.getNickname());
+        userRepository.save(user);
+    }
+
+    public boolean checkDuplicateUsername(String username){
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean checkDuplicateNickname(String nickname){
+        return userRepository.existsByNickname(nickname);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_USERNAME));
+        UserResponse userResponse = UserResponse.builder()
+                .nickname(user.getNickname())
+                .profileImage(user.getProfileImage())
+                .build();
+        return userResponse;
+    }
+
+    public void deleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_USERNAME));
+        userRepository.delete(user);
     }
 }

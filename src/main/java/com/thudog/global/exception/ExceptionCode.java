@@ -12,7 +12,10 @@ public enum ExceptionCode {
     NOT_FOUND_USER_USERNAME(4044, "요청한 사용자 이름에 해당하는 사용자가 없습니다."),
     INVALID_PASSWORD(4045, "요청한 사용자 이름과 비밀번호가 일치하지 않습니다"),
 
+    IMAGE_PROCESSING_ERROR(5001, "이미지 파일 처리 중 오류가 발생했습니다."),
+
     INVALID_INPUT(4000, "유효하지 않은 입력입니다.");
+
 
     private final int code;
     private final String message;
