@@ -22,7 +22,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<Void> createReview(@RequestBody @Valid ReviewCreateRequest reviewCreateRequest) {
         Long reviewId = reviewService.createReview(reviewCreateRequest);
-        return ResponseEntity.created(URI.create("/reviews/" + reviewId)).build();
+        return ResponseEntity.created(URI.create("/api/reviews/" + reviewId)).build();
     }
 
     @GetMapping
