@@ -17,6 +17,8 @@ public enum ExceptionCode {
 
     IMAGE_PROCESSING_ERROR(5001, "이미지 파일 처리 중 오류가 발생했습니다."),
 
+    INVALID_TOKEN(8001, "이미지 파일 처리 중 오류가 발생했습니다."),
+
     INVALID_INPUT(4000, "유효하지 않은 입력입니다.");
 
 

@@ -1,4 +1,4 @@
-package com.thudog.login.dto;
+package com.thudog.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

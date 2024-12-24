@@ -5,7 +5,6 @@ import com.thudog.user.domain.User;
 import com.thudog.user.domain.repository.UserRepository;
 import com.thudog.user.dto.NicknameUpdateRequest;
 import com.thudog.user.dto.UserResponse;
-import com.thudog.user.dto.UserSignUpRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,25 +18,8 @@ import static com.thudog.global.exception.ExceptionCode.*;
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
+
     private final UserRepository userRepository;
-
-    public Long signUp(UserSignUpRequest UserSingUprequest) {
-        if (checkDuplicateUsername(UserSingUprequest.getUsername())) {
-            throw new BadRequestException(DUPLICATE_USERNAME);
-        }
-
-        if (checkDuplicateNickname(UserSingUprequest.getNickname())) {
-            throw new BadRequestException(DUPLICATE_NICKNAME);
-        }
-
-        User user = User.builder()
-                .username(UserSingUprequest.getUsername())
-                .password(UserSingUprequest.getPassword())
-                .nickname(UserSingUprequest.getNickname())
-                .build();
-        User savedUser = userRepository.save(user);
-        return savedUser.getId();
-    }
 
     public void updateImage(String username, MultipartFile file) {
         User user = userRepository.findByUsername(username)
@@ -63,9 +45,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public boolean checkDuplicateUsername(String username){
-        return userRepository.existsByUsername(username);
-    }
+
 
     public boolean checkDuplicateNickname(String nickname){
         return userRepository.existsByNickname(nickname);

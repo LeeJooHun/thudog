@@ -7,6 +7,8 @@ import com.thudog.post.dto.PostUpdateRequest;
 import com.thudog.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
+    private final Logger logger = LoggerFactory.getLogger(PostController.class);
 
     @PostMapping
     public ResponseEntity<Void> createPost(@RequestBody @Valid PostCreateRequest postCreateRequest) {
