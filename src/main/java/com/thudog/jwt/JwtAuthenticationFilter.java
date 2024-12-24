@@ -19,8 +19,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, AuthException {
+        String path = request.getServletPath();
+        if (path.startsWith("/api/auth/signUp") || path.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String token = extractToken(request);  // 예외를 내부에서 처리하지 않고 던집니다.
         String username = jwtUtil.extractUsername(token);
         if (jwtUtil.validateToken(token, username)) {
